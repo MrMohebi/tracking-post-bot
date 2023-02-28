@@ -25,3 +25,11 @@ func EnvMongoURI() string {
 func EvnMongoDB() string {
 	return os.Getenv("MONGO_DB")
 }
+
+func EnvBotToken() string {
+	return os.Getenv("TEL_TOKEN")
+}
+
+func EnvTelBaseUrl() string {
+	return os.Getenv("TEL_URL")
+}
