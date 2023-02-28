@@ -1,52 +1,21 @@
 package main
 
 import (
-	"MrMohebi/tracking-post-telegram-bot/requests"
-	"github.com/anaskhan96/soup"
-	"github.com/joho/godotenv"
-	tele "gopkg.in/telebot.v3"
-	"log"
-	"os"
-	"time"
+	"github.com/MrMohebi/golang-gin-boilerplate.git/common"
+	"github.com/MrMohebi/golang-gin-boilerplate.git/configs"
+	"github.com/MrMohebi/golang-gin-boilerplate.git/router"
+	"github.com/gin-gonic/gin"
 )
 
+// nodemon --exec go run main.go --signal SIGTERM
+
 func main() {
-	println("aaaaa")
+	configs.Setup()
 
-	err := godotenv.Load()
+	server := gin.Default()
 
-	pref := tele.Settings{
-		Token:  os.Getenv("TEL_TOKEN"),
-		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
-	}
+	router.Routs(server)
 
-	b, err := tele.NewBot(pref)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	b.Handle(tele.OnText, func(c tele.Context) error {
-		var (
-		//user = c.Sender()
-		//text = c.Text()
-		)
-		err := c.Send("wait a second...")
-		if err != nil {
-			return err
-		}
-		bodyString, err := requests.PostSendRequest("104530134300045270076178")
-		if err != nil {
-
-		}
-		doc := soup.HTMLParse(string(bodyString))
-		links := doc.Find("div", "id", "txtVoteR").FindAll("div")
-		return c.Send(links)
-	})
-
-	b.Handle("/hello", func(c tele.Context) error {
-		return c.Send("Hello!")
-	})
-
-	b.Start()
+	err := server.Run("localhost:8005")
+	common.IsErr(err, "Err in starting server")
 }
